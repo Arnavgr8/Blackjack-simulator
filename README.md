@@ -2,7 +2,7 @@
 
 # Blackjack Strategy Battle
 
-Welcome to the **Blackjack Strategy Battle**! This project simulates a series of Blackjack games between various strategies and evaluates their performance based on key metrics. Participants are invited to contribute their own Blackjack strategies and see how well they fare against others in a tournament setup.
+Welcome to the **Blackjack Strategy Battle**! This project simulates a series of Blackjack games between various strategies and evaluates their performance based on key metrics. Participants can contribute their own Blackjack strategies and see how well they perform against others in a tournament setup.
 
 ## Table of Contents
 
@@ -16,7 +16,9 @@ Welcome to the **Blackjack Strategy Battle**! This project simulates a series of
 
 ## Introduction
 
-In this project, multiple Blackjack strategies face off against each other in a **Round-Robin Tournament**. The goal is to see which strategies perform the best in terms of wins, consistency, and overall game management. Every strategy will be evaluated based on its performance in the tournament, and rankings will be generated accordingly.
+In this project, multiple Blackjack strategies face off against each other in a **Round-Robin Tournament**. The goal is to evaluate each strategy's effectiveness in winning games, its consistency, and its overall performance. The evaluation criteria will be fair and transparent to ensure that no strategy has an unfair advantage.
+
+Each strategy will be evaluated based on its performance in a series of games, with the final ranking based on various performance metrics.
 
 ## Basic Rules of Blackjack
 
@@ -54,7 +56,6 @@ The performance of each strategy will be evaluated based on the following **crit
    - **Bust Rate**: Percentage of games where the strategy busts. A lower bust rate is generally better.
    - **Average Hand Value**: The average value of the hand at the end of the game. A hand value closer to 21 is considered better.
    - **Consistency**: Measured as the standard deviation of the hand values across all games played by the strategy. Lower values indicate more consistent performance.
-   - **Risk-to-Reward Ratio**: A measure of how often a strategy busts compared to how often it wins. A lower ratio indicates a better balance between risk and reward.
 
 3. **Final Rating**: The final rating for each strategy is computed by normalizing and combining the metrics mentioned above. A small random perturbation is added to avoid ties. Strategies with the highest ratings will be ranked the best.
 
@@ -147,7 +148,6 @@ Strategy: WhateverPublicSchool
   Bust Rate: 13.33%
   Avg Hand Value: 18.32
   Consistency (Std. Dev.): 1.18
-  Risk-to-Reward Ratio: 0.50
   Rating: 0.76254830
 
 Strategy: AnotherInternationalSchool
@@ -159,7 +159,6 @@ Strategy: AnotherInternationalSchool
   Bust Rate: 6.67%
   Avg Hand Value: 17.12
   Consistency (Std. Dev.): 1.25
-  Risk-to-Reward Ratio: 0.30
   Rating: 0.73867485
 
 Final Rankings:
@@ -169,5 +168,13 @@ Final Rankings:
 ```
 
 This will give you an overview of how each strategy performed and its final ranking in the tournament.
+
+---
+
+### Additional Notes
+
+- **Fairness in Evaluation**: To ensure fairness, each strategy is evaluated against every other strategy in a **Round-Robin Tournament**. Multiple simulations are run to ensure stability in results.
+- **Dynamic Simulation Results**: To prevent randomness from affecting the outcome of the tournament, we have ensured that the simulation results are deterministic through proper seeding of the random number generator.
+- **Pre Built Stratergies**: To make this tournament of stratergies more intresting your stratergies will have to fight a few prebuilt stratergies in stratergies.py of this repo. [stratergies.py](https://github.com/Arnavgr8/Blackjack-simulator/blob/main/strategies.py)
 
 ---

@@ -122,7 +122,7 @@ class RoundRobinTournament:
 
         # Initialize a dictionary to track scores for each strategy
         self.scores = {strategy.name: {
-            "wins": 0, "losses": 0, "busts": 0, "total_hand_value": 0, "games": 0
+            "wins": 0, "losses": 0, "busts": 0, "total_hand_value": 0, "games": 0, "hand_values": []
         } for strategy in strategies}
 
     def play_match(self, strategy1, strategy2):
@@ -148,8 +148,8 @@ class RoundRobinTournament:
         self.scores[strategy2.name]["busts"] += (1 if game.hand_value([strategy2.hand_value]) > 21 else 0)
 
         # Track hand values for each strategy
-        self.scores[strategy1.name]["total_hand_value"] += game.hand_value([strategy1.hand_value])
-        self.scores[strategy2.name]["total_hand_value"] += game.hand_value([strategy2.hand_value])
+        self.scores[strategy1.name]["hand_values"].append(game.hand_value([strategy1.hand_value]))
+        self.scores[strategy2.name]["hand_values"].append(game.hand_value([strategy2.hand_value]))
 
         # Track the number of games played for each strategy
         self.scores[strategy1.name]["games"] += 1
@@ -159,23 +159,13 @@ class RoundRobinTournament:
         """
         Calculates and displays performance metrics and rankings for each strategy.
 
-        This includes win rates, bust rates, average hand values, consistency, and risk-to-reward ratio.
-
-        After calculating the metrics, the strategies are ranked based on their overall performance.
+        This includes win rates, bust rates, average hand values, consistency, and fairness.
         """
         ratings = {}
 
         # Output both basic stats (Wins, Losses, Total Matches) and performance metrics
         for strategy in self.strategies:
             stats = self.scores[strategy.name]
-
-            # Print the basic stats for each strategy
-            print(f"Strategy: {strategy.name}")
-            print(f"  Matches Played: {stats['games']}")
-            print(f"  Wins: {stats['wins']}")
-            print(f"  Losses: {stats['losses']}")
-            print(f"  Busts: {stats['busts']}")
-            print()
 
             # Calculate win rate (percentage of games won)
             win_rate = stats["wins"] / stats["games"] if stats["games"] > 0 else 0
@@ -184,26 +174,24 @@ class RoundRobinTournament:
             bust_rate = stats["busts"] / stats["games"] if stats["games"] > 0 else 0
 
             # Calculate the average hand value (average value of hands over all games)
-            avg_hand_value = stats["total_hand_value"] / stats["games"] if stats["games"] > 0 else 0
+            avg_hand_value = sum(stats["hand_values"]) / stats["games"] if stats["games"] > 0 else 0
 
             # Calculate consistency (standard deviation of hand values across games)
-            stddev = math.sqrt(sum((x - avg_hand_value) ** 2 for x in [stats["total_hand_value"]]) / len([stats["total_hand_value"]])) if len([stats["total_hand_value"]]) > 1 else 0
+            if len(stats["hand_values"]) > 1:
+                stddev = math.sqrt(sum((x - avg_hand_value) ** 2 for x in stats["hand_values"]) / len(stats["hand_values"]))
+            else:
+                stddev = 0  # No consistency if only 1 game
 
-            # Calculate risk-to-reward ratio (ratio of bust rate to win rate)
-            risk_to_reward = bust_rate / win_rate if win_rate > 0 else float('inf')
-
-            # Normalize the metrics for consistency (scale to [0, 1] range)
+            # Normalize the metrics for fairness (scale to [0, 1] range)
             win_rate_normalized = win_rate
             bust_rate_normalized = 1 - bust_rate  # Lower bust rate is better
             avg_hand_value_normalized = 1 - abs(17 - avg_hand_value) / 17  # Closer to 17 is better
             consistency_normalized = 1 / (1 + stddev)  # Lower standard deviation (more consistency) is better
-            risk_to_reward_normalized = 1 / (1 + risk_to_reward)  # Lower risk-to-reward ratio is better
 
             # Combine all the normalized scores into a final rating (average of all metrics)
             final_rating = (
-                win_rate_normalized + bust_rate_normalized + avg_hand_value_normalized +
-                consistency_normalized + risk_to_reward_normalized
-            ) / 5  # Average of all metrics
+                win_rate_normalized + bust_rate_normalized + avg_hand_value_normalized + consistency_normalized
+            ) / 4  # Average of all metrics
 
             # Add a small random perturbation to the final rating to avoid ties
             final_rating += random.uniform(-self.perturbation_factor, self.perturbation_factor)
@@ -211,11 +199,15 @@ class RoundRobinTournament:
             ratings[strategy.name] = final_rating
 
             # Print the performance metrics for each strategy
+            print(f"Strategy: {strategy.name}")
+            print(f"  Matches Played: {stats['games']}")
+            print(f"  Wins: {stats['wins']}")
+            print(f"  Losses: {stats['losses']}")
+            print(f"  Busts: {stats['busts']}")
             print(f"  Win Rate: {win_rate * 100:.2f}%")
             print(f"  Bust Rate: {bust_rate * 100:.2f}%")
             print(f"  Avg Hand Value: {avg_hand_value:.2f}")
             print(f"  Consistency (Std. Dev.): {stddev:.2f}")
-            print(f"  Risk-to-Reward Ratio: {risk_to_reward:.2f}")
             print(f"  Rating: {final_rating:.8f}")
             print()
 
